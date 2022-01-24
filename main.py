@@ -33,4 +33,33 @@ def get_random_word(file):
         return None
 
 
-print(get_random_word(extract_possible_words(3, 5, "words.txt")))
+# print(get_random_word(extract_possible_words(3, 5, "words.txt")))
+
+if __name__ == "__main__":
+    min_size_chosen = False
+    max_size_chosen = False
+    while not min_size_chosen:
+        min_size = input("How many letters should your word be at least ?\n")
+        try:
+            min_size = int(min_size)
+            if min_size < 1 or min_size > 25:
+                raise ValueError
+            min_size_chosen = True
+            print("Your word will be of at least", str(min_size), "letters long.")
+        except ValueError:
+            print("Please enter a number.")
+    while not max_size_chosen:
+        max_size = input("How many letters should your word be at most ?\n")
+        try:
+            max_size = int(max_size)
+            if max_size < min_size or max_size > 25:
+                raise ValueError
+            max_size_chosen = True
+            print("Your word will be of at most", str(max_size), "long.")
+        except ValueError:
+            print("Please enter a number.")
+    print(
+        get_random_word(
+            extract_possible_words(min_length=min_size, max_length=max_size)
+        )
+    )
