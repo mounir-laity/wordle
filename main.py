@@ -3,7 +3,7 @@ from os.path import exists
 
 
 def extract_possible_words(min_length=5, max_length=8, in_file="words.txt"):
-    out_file_name = "" + str(min_length) + "-" + str(max_length) + "words.txt"
+    out_file_name = "" + str(min_length) + "-" + str(max_length) + "_letters_words.txt"
     if not check_file(min_length, max_length):
         with open(in_file, "r+") as file:
             with open(out_file_name, "w+") as write_to:
@@ -11,10 +11,11 @@ def extract_possible_words(min_length=5, max_length=8, in_file="words.txt"):
                     length = len(line)
                     if length > min_length and length <= max_length + 1:
                         write_to.write(line)
+    return out_file_name
 
 
 def check_file(min_length, max_length):
-    file_name = str(min_length) + "-" + str(max_length) + "words.txt"
+    file_name = str(min_length) + "-" + str(max_length) + "_letters_words.txt"
     return exists(file_name)
 
 
@@ -32,5 +33,4 @@ def get_random_word(file):
         return None
 
 
-extract_possible_words(10, 12, "words.txt")
-# print(get_random_word("test.txt"))
+print(get_random_word(extract_possible_words(3, 5, "words.txt")))
