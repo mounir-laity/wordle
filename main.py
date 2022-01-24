@@ -1,18 +1,21 @@
 from random import randint
+from os.path import exists
 
 
 def extract_possible_words(min_length=5, max_length=8, in_file="words.txt"):
     out_file_name = "" + str(min_length) + "-" + str(max_length) + "words.txt"
-    with open(in_file, "r+") as file:
-        with open(out_file_name, "w+") as write_to:
-            for line in file:
-                length = len(line)
-                if length > min_length and length <= max_length + 1:
-                    write_to.write(line)
+    if not check_file(min_length, max_length):
+        with open(in_file, "r+") as file:
+            with open(out_file_name, "w+") as write_to:
+                for line in file:
+                    length = len(line)
+                    if length > min_length and length <= max_length + 1:
+                        write_to.write(line)
 
 
 def check_file(min_length, max_length):
-    pass
+    file_name = str(min_length) + "-" + str(max_length) + "words.txt"
+    return exists(file_name)
 
 
 def get_random_word(file):
