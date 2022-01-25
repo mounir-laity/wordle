@@ -1,5 +1,6 @@
 from random import randint
 from os.path import exists
+from colorama import Fore, Style
 
 
 def extract_possible_words(min_length=5, max_length=8, in_file="words.txt"):
@@ -31,6 +32,23 @@ def get_random_word(file):
             if line_num == chosen_num:
                 return word.strip()
         return None
+
+
+def check_guessed_word(guess, solution):
+    states = []
+    if guess == solution:
+        for i in range(len(guess)):
+            states.append(1)
+            return states
+    if len(guess) != len(word):
+        return None
+    for index, letter in enumerate(guess):
+        if is_in_word(letter, word):
+            if is_correctly_placed(letter, index, word):
+                states.append(1)
+            states.append(0)
+        states.append(-1)
+    return states
 
 
 def is_in_word(letter, word: str):
@@ -73,7 +91,8 @@ if __name__ == "__main__":
     word_length = len(word)
     print("Your word will have", str(word_length), "letters.")
     while not found:
-        input("Please enter a guess.")
+        input("Please enter a guess.\n")
+        print(f"{Fore.GREEN}*{Style.RESET_ALL}****")
     # print(
     #     get_random_word(
     #         extract_possible_words(min_length=min_size, max_length=max_size)
