@@ -33,11 +33,20 @@ def get_random_word(file):
         return None
 
 
+def is_in_word(letter, word: str):
+    return letter in word
+
+
+def is_correctly_placed(letter, letter_pos, word: str):
+    return letter == word[letter_pos]
+
+
 # print(get_random_word(extract_possible_words(3, 5, "words.txt")))
 
 if __name__ == "__main__":
     min_size_chosen = False
     max_size_chosen = False
+    found = False
     while not min_size_chosen:
         min_size = input("How many letters should your word be at least ?\n")
         try:
@@ -58,8 +67,15 @@ if __name__ == "__main__":
             print("Your word will be of at most", str(max_size), "long.")
         except ValueError:
             print("Please enter a number.")
-    print(
-        get_random_word(
-            extract_possible_words(min_length=min_size, max_length=max_size)
-        )
+    word = get_random_word(
+        extract_possible_words(min_length=min_size, max_length=max_size)
     )
+    word_length = len(word)
+    print("Your word will have", str(word_length), "letters.")
+    while not found:
+        input("Please enter a guess.")
+    # print(
+    #     get_random_word(
+    #         extract_possible_words(min_length=min_size, max_length=max_size)
+    #     )
+    # )
