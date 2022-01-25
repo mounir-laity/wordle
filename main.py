@@ -1,26 +1,19 @@
-from ast import For
+from io import FileIO
 from random import randint
-from os.path import exists
-from typing import Dict
 from colorama import Fore, Style
 from time import sleep
+import tkinter
 
 
-def extract_possible_words(min_length=5, max_length=8, in_file="words.txt"):
-    out_file_name = "" + str(min_length) + "-" + str(max_length) + "_letters_words.txt"
-    if not check_file(min_length, max_length):
-        with open(in_file, "r+") as file:
-            with open(out_file_name, "w+") as write_to:
-                for line in file:
-                    length = len(line)
-                    if length > min_length and length <= max_length + 1:
-                        write_to.write(line)
+def extract_possible_words(min_length=5, max_length=8, in_file="dictionnary.txt"):
+    out_file_name = "words.txt"
+    with open(in_file, "r+") as file:
+        with open(out_file_name, "w+") as write_to:
+            for line in file:
+                length = len(line)
+                if length > min_length and length <= max_length + 1:
+                    write_to.write(line)
     return out_file_name
-
-
-def check_file(min_length, max_length):
-    file_name = str(min_length) + "-" + str(max_length) + "_letters_words.txt"
-    return exists(file_name)
 
 
 def get_random_word(file):
@@ -84,8 +77,12 @@ def get_occurencies(word):
     return occurencies
 
 
-def guess_exists(guess, file):
-    pass
+def guess_exists(guess: str, file_name: str):
+    with open(file_name, "r+") as file:
+        for line in file:
+            if guess.strip().upper() == line.strip().upper():
+                return True
+    return False
 
 
 def is_in_word(letter: str, word: str):
@@ -96,7 +93,7 @@ def is_correctly_placed(letter: str, letter_pos: int, word: str):
     return letter.upper() == word[letter_pos].upper()
 
 
-# print(get_random_word(extract_possible_words(3, 5, "words.txt")))
+# print(get_random_word(extract_possible_words(3, 5, "dictionnary.txt")))
 
 if __name__ == "__main__":
     min_size_chosen = False
@@ -127,30 +124,41 @@ if __name__ == "__main__":
     )
     word_length = len(word)
     print("Your word will have", str(word_length), "letters.")
-    while not found:
-        word_guess = input("Please enter a guess.\n")
-        states = guess(word_guess, word)
-        if states is None:
-            print("Your guess must have", str(word_length), "letters !")
-            continue
-        result = ""
-        for index, state in enumerate(states):
-            letter = word_guess[index]
-            if state == -1:
-                result = f"{Fore.RED}{letter}{Style.RESET_ALL}"
-                print(result, end="", flush=True)
-                sleep(0.5)
-            elif state == 0:
-                result = f"{Fore.YELLOW}{letter}{Style.RESET_ALL}"
-                print(result, end="", flush=True)
-                sleep(0.5)
-            else:
-                result = f"{Fore.GREEN}{letter}{Style.RESET_ALL}"
-                print(result, end="", flush=True)
-                sleep(0.5)
-        print()
-    # print(
-    #     get_random_word(
-    #         extract_possible_words(min_length=min_size, max_length=max_size)
-    #     )
-    # )
+    discovered = list("")
+    for i in range(word_length):
+        discovered.append("*")
+    try:
+        while not found:
+            word_guess = input("Please enter a guess.\n")
+            if not guess_exists(word_guess, "words.txt"):
+                print("Please enter a valid word !")
+                continue
+            states = guess(word_guess, word)
+            if states is None:
+                print("Your guess must have", str(word_length), "letters !")
+                continue
+            result = ""
+            for index, state in enumerate(states):
+                letter = word_guess[index]
+                if state == -1:
+                    result = f"{Fore.RED}{letter}{Style.RESET_ALL}"
+                    print(result, end="", flush=True)
+                    sleep(0.5)
+                elif state == 0:
+                    result = f"{Fore.YELLOW}{letter}{Style.RESET_ALL}"
+                    print(result, end="", flush=True)
+                    sleep(0.5)
+                else:
+                    result = f"{Fore.GREEN}{letter}{Style.RESET_ALL}"
+                    discovered[index] = result
+                    print(result, end="", flush=True)
+                    sleep(0.5)
+            print()
+            print("".join(discovered))
+    except KeyboardInterrupt:
+        print("The word was", word, "!")
+# print(
+#     get_random_word(
+#         extract_possible_words(min_length=min_size, max_length=max_size)
+#     )
+# )
