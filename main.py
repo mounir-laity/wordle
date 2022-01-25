@@ -2,6 +2,7 @@ from ast import For
 from random import randint
 from os.path import exists
 from colorama import Fore, Style
+from time import sleep
 
 
 def extract_possible_words(min_length=5, max_length=8, in_file="words.txt"):
@@ -54,12 +55,16 @@ def guess(guess, solution):
     return states
 
 
-def is_in_word(letter, word: str):
-    return letter in word
+def guess_exists(guess, file):
+    pass
 
 
-def is_correctly_placed(letter, letter_pos, word: str):
-    return letter == word[letter_pos]
+def is_in_word(letter: str, word: str):
+    return letter.upper() in word.upper()
+
+
+def is_correctly_placed(letter: str, letter_pos: int, word: str):
+    return letter.upper() == word[letter_pos].upper()
 
 
 # print(get_random_word(extract_possible_words(3, 5, "words.txt")))
@@ -103,12 +108,18 @@ if __name__ == "__main__":
         for index, state in enumerate(states):
             letter = word_guess[index]
             if state == -1:
-                result += f"{Fore.RED}{letter}{Style.RESET_ALL}"
+                result = f"{Fore.RED}{letter}{Style.RESET_ALL}"
+                print(result, end="", flush=True)
+                sleep(0.5)
             elif state == 0:
-                result += f"{Fore.YELLOW}{letter}{Style.RESET_ALL}"
+                result = f"{Fore.YELLOW}{letter}{Style.RESET_ALL}"
+                print(result, end="", flush=True)
+                sleep(0.5)
             else:
-                result += f"{Fore.GREEN}{letter}{Style.RESET_ALL}"
-        print(result)
+                result = f"{Fore.GREEN}{letter}{Style.RESET_ALL}"
+                print(result, end="", flush=True)
+                sleep(0.5)
+        print()
     # print(
     #     get_random_word(
     #         extract_possible_words(min_length=min_size, max_length=max_size)
