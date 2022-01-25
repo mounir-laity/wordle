@@ -1,3 +1,4 @@
+from ast import For
 from random import randint
 from os.path import exists
 from colorama import Fore, Style
@@ -34,7 +35,7 @@ def get_random_word(file):
         return None
 
 
-def check_guessed_word(guess, solution):
+def guess(guess, solution):
     states = []
     if guess == solution:
         for i in range(len(guess)):
@@ -46,8 +47,10 @@ def check_guessed_word(guess, solution):
         if is_in_word(letter, word):
             if is_correctly_placed(letter, index, word):
                 states.append(1)
-            states.append(0)
-        states.append(-1)
+            else:
+                states.append(0)
+        else:
+            states.append(-1)
     return states
 
 
@@ -91,8 +94,21 @@ if __name__ == "__main__":
     word_length = len(word)
     print("Your word will have", str(word_length), "letters.")
     while not found:
-        input("Please enter a guess.\n")
-        print(f"{Fore.GREEN}*{Style.RESET_ALL}****")
+        word_guess = input("Please enter a guess.\n")
+        states = guess(word_guess, word)
+        if states is None:
+            print("Your guess must have", str(word_length), "letters !")
+            continue
+        result = ""
+        for index, state in enumerate(states):
+            letter = word_guess[index]
+            if state == -1:
+                result += f"{Fore.RED}{letter}{Style.RESET_ALL}"
+            elif state == 0:
+                result += f"{Fore.YELLOW}{letter}{Style.RESET_ALL}"
+            else:
+                result += f"{Fore.GREEN}{letter}{Style.RESET_ALL}"
+        print(result)
     # print(
     #     get_random_word(
     #         extract_possible_words(min_length=min_size, max_length=max_size)
