@@ -1,6 +1,7 @@
 from ast import For
 from random import randint
 from os.path import exists
+from typing import Dict
 from colorama import Fore, Style
 from time import sleep
 
@@ -36,23 +37,51 @@ def get_random_word(file):
         return None
 
 
-def guess(guess, solution):
+def guess(guess: str, solution: str):
     states = []
-    if guess == solution:
-        for i in range(len(guess)):
+    guess = guess.upper()
+    solution = solution.upper()
+    if len(guess) != len(solution):
+        return None
+    elif guess == solution:
+        for letter in solution:
             states.append(1)
             return states
-    if len(guess) != len(word):
-        return None
-    for index, letter in enumerate(guess):
-        if is_in_word(letter, word):
-            if is_correctly_placed(letter, index, word):
+
+    else:
+        occurencies_solution = get_occurencies(solution)
+        found_occurencies = dict()
+        buffer: list[tuple[str, int]] = []
+        for index, letter in enumerate(guess):
+            if not is_in_word(letter, solution):
+                states.append(-1)
+            elif is_correctly_placed(letter, index, solution):
                 states.append(1)
+                if letter not in found_occurencies:
+                    found_occurencies[letter] = 1
+                else:
+                    found_occurencies[letter] += 1
             else:
-                states.append(0)
-        else:
-            states.append(-1)
+                buffer.append((letter, index))
+        for element in buffer:
+            if element[0] not in found_occurencies:
+                states.insert(element[1], 0)
+            elif found_occurencies[element[0]] < occurencies_solution[element[0]]:
+                found_occurencies[element[0]] += 1
+                states.insert(element[1], 0)
+            else:
+                states.insert(element[1], -1)
     return states
+
+
+def get_occurencies(word):
+    occurencies = dict()
+    for letter in word:
+        if letter not in occurencies:
+            occurencies[letter] = 1
+        else:
+            occurencies[letter] += 1
+    return occurencies
 
 
 def guess_exists(guess, file):
