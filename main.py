@@ -93,6 +93,8 @@ def is_correctly_placed(letter: str, letter_pos: int, word: str):
 if __name__ == "__main__":
     min_size_chosen = False
     max_size_chosen = False
+    max_tries = 6
+    tries = 0
     while not min_size_chosen:
         min_size = input("How many letters should your word be at least ?\n")
         try:
@@ -122,11 +124,12 @@ if __name__ == "__main__":
     for i in range(word_length):
         discovered.append("*")
     try:
-        while True:
-            word_guess = input("Please enter a guess.\n")
+        while tries <= max_tries:
+            print("You have", str(max_tries - tries), end=" ")
+            word_guess = input("tries left. Please enter a guess.\n")
             if word_guess is not None and word_guess.upper() == word.upper():
                 print("Great job ! The word was indeed", word_guess.upper(), "!")
-                break
+                exit(0)
             if not guess_exists(word_guess, "words.txt"):
                 print("Please enter a valid word !")
                 continue
@@ -150,7 +153,9 @@ if __name__ == "__main__":
                     discovered[index] = result
                     print(result, end="", flush=True)
                     sleep(0.5)
+            tries += 1
             print()
             print("".join(discovered))
+        print("Game over ! The word was", word, "!")
     except KeyboardInterrupt:
         print("The word was", word, "!")
