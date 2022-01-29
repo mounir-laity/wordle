@@ -36,11 +36,6 @@ def guess(guess: str, solution: str):
     solution = solution.upper()
     if len(guess) != len(solution):
         return None
-    elif guess == solution:
-        for letter in solution:
-            states.append(1)
-            return states
-
     else:
         occurencies_solution = get_occurencies(solution)
         found_occurencies = dict()
@@ -98,7 +93,6 @@ def is_correctly_placed(letter: str, letter_pos: int, word: str):
 if __name__ == "__main__":
     min_size_chosen = False
     max_size_chosen = False
-    found = False
     while not min_size_chosen:
         min_size = input("How many letters should your word be at least ?\n")
         try:
@@ -128,8 +122,11 @@ if __name__ == "__main__":
     for i in range(word_length):
         discovered.append("*")
     try:
-        while not found:
+        while True:
             word_guess = input("Please enter a guess.\n")
+            if word_guess is not None and word_guess.upper() == word.upper():
+                print("Great job ! The word was indeed", word_guess.upper(), "!")
+                break
             if not guess_exists(word_guess, "words.txt"):
                 print("Please enter a valid word !")
                 continue
@@ -157,8 +154,3 @@ if __name__ == "__main__":
             print("".join(discovered))
     except KeyboardInterrupt:
         print("The word was", word, "!")
-# print(
-#     get_random_word(
-#         extract_possible_words(min_length=min_size, max_length=max_size)
-#     )
-# )
