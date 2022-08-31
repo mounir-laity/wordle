@@ -1,8 +1,6 @@
-from io import FileIO
 from random import randint
 from colorama import Fore, Style
 from time import sleep
-import tkinter
 
 
 def extract_possible_words(min_length=5, max_length=8, in_file="dictionnary.txt"):
@@ -54,6 +52,7 @@ def guess(guess: str, solution: str):
         for element in buffer:
             if element[0] not in found_occurencies:
                 states.insert(element[1], 0)
+                found_occurencies[element[0]] = 1
             elif found_occurencies[element[0]] < occurencies_solution[element[0]]:
                 found_occurencies[element[0]] += 1
                 states.insert(element[1], 0)
@@ -88,45 +87,54 @@ def is_correctly_placed(letter: str, letter_pos: int, word: str):
     return letter.upper() == word[letter_pos].upper()
 
 
-# print(get_random_word(extract_possible_words(3, 5, "dictionnary.txt")))
-
-if __name__ == "__main__":
+def choose_min_size():
     min_size_chosen = False
-    max_size_chosen = False
-    max_tries = 6
-    tries = 0
     while not min_size_chosen:
-        min_size = input("How many letters should your word be at least ?\n")
         try:
-            min_size = int(min_size)
+            min_size = int(input("How many letters should your word be at least ?\n"))
             if min_size < 1 or min_size > 25:
                 raise ValueError
             min_size_chosen = True
             print("Your word will be of at least", str(min_size), "letters long.")
         except ValueError:
             print("Please enter a number.")
+    return min_size
+
+
+def choose_max_size(min_size):
+    max_size_chosen = False
     while not max_size_chosen:
-        max_size = input("How many letters should your word be at most ?\n")
         try:
-            max_size = int(max_size)
+            max_size = int(input("How many letters should your word be at most ?\n"))
             if max_size < min_size or max_size > 25:
                 raise ValueError
             max_size_chosen = True
-            print("Your word will be of at most", str(max_size), "long.")
+            print("Your word will be of at most", str(max_size), "letters long.")
         except ValueError:
             print("Please enter a number.")
+    return max_size
+
+
+if __name__ == "__main__":
+    max_tries = 6
+    tries = 0
+    min_size = choose_min_size()
+    max_size = choose_max_size(min_size)
     word = get_random_word(
         extract_possible_words(min_length=min_size, max_length=max_size)
     )
     word_length = len(word)
+
     print("Your word will have", str(word_length), "letters.")
-    discovered = list("")
+    print("*" * word_length)
+    discovered = []
     for i in range(word_length):
         discovered.append("*")
     try:
         while tries <= max_tries:
-            print("You have", str(max_tries - tries), end=" ")
-            word_guess = input("tries left. Please enter a guess.\n")
+            word_guess = input(
+                f"You have {str(max_tries - tries)} tries left. Please enter a guess.\n"
+            )
             if word_guess is not None and word_guess.upper() == word.upper():
                 print("Great job ! The word was indeed", word_guess.upper(), "!")
                 exit(0)
